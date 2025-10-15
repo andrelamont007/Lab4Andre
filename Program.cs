@@ -28,17 +28,16 @@ namespace MainLab4Andre
             while (!srStudent.EndOfStream)
             {
                 items = srStudent.ReadLine().Split(',');
+                grades.ids.Add(int.Parse(items[0]));
                 if (double.TryParse(items.Last(), out double Z))
                 {
-                    grades.zScores[counter] = Z;
-                }
-                else
-                {
-                    Console.WriteLine($"Invalid number on line {counter + 1}: {items.Last()}");
+                    grades.zScores.Add(int.Parse(items[0]), Z);
                 }
                 counter++;
                 student.addingContent(items);
             }
+            grades.InitializeDictionaries();
+
             student.DisplayInfo();
             srStudent.Close();
 
@@ -48,7 +47,7 @@ namespace MainLab4Andre
 
             grades.DisplayingGradesCategories();
             srCourse.ReadLine();
-            int i = 0;
+            int? oldId = null;
             while (!srCourse.EndOfStream)
             {
                 items = srCourse.ReadLine().Split(',');
@@ -56,32 +55,28 @@ namespace MainLab4Andre
                 double newScore = double.Parse(items[3]);
                 double newIRG = double.Parse(items[items.Length - 1]);
 
-                if (grades.nbOfScores.ContainsKey(studentId))
-                    grades.nbOfScores[studentId]++;
-                else
-                    grades.nbOfScores[studentId] = 1;
-
-                if (grades.nbOfIRGs.ContainsKey(studentId))
-                    grades.nbOfIRGs[studentId]++;
-                else
-                    grades.nbOfIRGs[studentId] = 1;
-
                 if (!grades.studentScores.ContainsKey(studentId))
                     grades.studentScores[studentId] = new List<double>();
-
                 if (!grades.studentIRGs.ContainsKey(studentId))
                     grades.studentIRGs[studentId] = new List<double>();
 
                 grades.studentScores[studentId].Add(newScore);
-                
                 grades.studentIRGs[studentId].Add(newIRG);
 
-                if (i == 1 | i ==3 | i==6 | i==7 | i==9)
-                    grades.DisplayingGrades(studentId);
-                i++;
+                if (!grades.nbOfScores.ContainsKey(studentId))
+                    grades.nbOfScores[studentId] = 0;
+                grades.nbOfScores[studentId]++;
+
+                if (!grades.nbOfIRGs.ContainsKey(studentId))
+                    grades.nbOfIRGs[studentId] = 0;
+                grades.nbOfIRGs[studentId]++;
             }
-            
-            srCourse.Close();
+
+            foreach (var studentId in grades.studentScores.Keys.OrderBy(id => id))
+            {
+                grades.DisplayingGrades(studentId);
+            }
+
         }
     }
 }

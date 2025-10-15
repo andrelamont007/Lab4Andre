@@ -55,51 +55,52 @@ namespace MainLab4Andre
             return (Z * 5 + averageIRG + 35) / 60 * 20;
         }
 
-        public int[] ids = { 1001, 1002, 1003, 1004, 1005 };
+        public List<int> ids = new List<int>();
+        public Dictionary<int, int> nbOfScores;
+        public Dictionary<int, int> nbOfIRGs;
 
-        public Dictionary<int, int> nbOfScores = new Dictionary<int, int>{
-            {1001,0},
-            {1002,0 },
-            {1003,0 },
-            {1004,0 },
-            {1005,0 }
-        };
+        public void InitializeDictionaries()
+        {
+            nbOfScores = new Dictionary<int, int>();
+            nbOfIRGs = new Dictionary<int, int>();
 
-        public Dictionary<int, int> nbOfIRGs = new Dictionary<int, int>{
-            {1001,0},
-            {1002,0 },
-            {1003,0 },
-            {1004,0 },
-            {1005,0 }
-        };
+            foreach (int id in ids)
+            {
+                nbOfScores[id] = 0;
+                nbOfIRGs[id] = 0;
+            }
+        }
 
         public Dictionary<int, List<double>> studentScores = new Dictionary<int, List<double>>();
         public Dictionary<int, List<double>> studentIRGs = new Dictionary<int, List<double>>();
 
 
-        public double[] zScores = new double[5];
-        public Dictionary<int, double> zScoresForStudent;
-
-        public ChamplainStudent_Part2()
-        {
-            zScoresForStudent = new Dictionary<int, double>
-    {
-        { 1001, zScores[0] },
-        { 1002, zScores[1] },
-        { 1003, zScores[2] },
-        { 1004, zScores[3] },
-        { 1005, zScores[4] }
-    };
-        }
-
+        public Dictionary<int, double> zScores = new Dictionary<int, double>();
         public void DisplayingGradesCategories()
         {
-            Console.WriteLine("ID|Avg|GPA|R_score|");
+            Console.WriteLine("      ID      |      Avg      |     GPA      |    R_score    |");
         }
 
         public void DisplayingGrades(int studentId)
         {
-            Console.WriteLine(studentId + "|" + CalculateAverage(studentScores[studentId]) + "|" + CalculateGPA(studentScores[studentId]) + "|" + CalculateRScore(studentIRGs[studentId], zScoresForStudent[studentId]));
+            //spaces
+            StringBuilder sb = new StringBuilder();
+            int nbOfSpaces = 14 - studentId.ToString().Length;
+            int nbOfSpacesBefore = nbOfSpaces / 2;
+            int nbOfSpacesAfter = nbOfSpaces - nbOfSpacesBefore;
+            sb.Append(new string(' ', nbOfSpacesBefore) + studentId + new string(' ', nbOfSpacesAfter) + "|");
+
+            nbOfSpaces = 14 - (CalculateAverage(studentScores[studentId])).ToString().Length;
+            sb.Append(new string(' ', nbOfSpacesBefore) + CalculateAverage(studentScores[studentId]).ToString("0.00") + new string(' ', nbOfSpacesAfter) + "|");
+
+            nbOfSpaces = 14 - (CalculateGPA(studentScores[studentId])).ToString().Length;
+            sb.Append(new string(' ', nbOfSpacesBefore) + CalculateGPA(studentScores[studentId]).ToString("0.00") + new string(' ', nbOfSpacesAfter) + "|");
+
+            nbOfSpaces = 14 - (CalculateRScore(studentIRGs[studentId], zScores[studentId])).ToString().Length;
+            sb.Append(new string(' ', nbOfSpacesBefore) + CalculateRScore(studentIRGs[studentId], zScores[studentId]).ToString("0.00") + new string(' ', nbOfSpacesAfter) + "|");
+
+            Console.WriteLine(sb.ToString());
+
         }
     }
 }
